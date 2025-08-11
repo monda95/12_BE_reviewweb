@@ -1,7 +1,15 @@
+from django.urls import path, include
+from rest_framework_nested import routers
+from .views import RestaurantViewSet
+from reviews.views import ReviewViewSet
 
+router = routers.SimpleRouter()
+router.register(r'', RestaurantViewSet, basename='restaurants')
 
-from restaurants import views
-from rest_framework import routers
+reviews_router = routers.NestedSimpleRouter(router, r'', lookup='restaurant')
+reviews_router.register(r'reviews', ReviewViewSet, basename='restaurant-reviews')
 
-router = routers.DefaultRouter()
-router.register(r'restaurants', views.RestaurantViewSet)
+urlpatterns = [
+    path('', include(router.urls)),
+    path('', include(reviews_router.urls)),
+]
